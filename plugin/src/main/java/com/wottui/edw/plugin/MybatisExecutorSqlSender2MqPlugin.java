@@ -2,11 +2,7 @@ package com.wottui.edw.plugin;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.plugin.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +23,11 @@ public class MybatisExecutorSqlSender2MqPlugin implements Interceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisExecutorSqlSender2MqPlugin.class);
     private static final SqlTranslator SQL_TRANSLATOR = new SqlTranslatorImpl();
+    private MessageSender sender;
+
+    public MybatisExecutorSqlSender2MqPlugin(MessageSender sender) {
+        this.sender = sender;
+    }
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -41,10 +42,12 @@ public class MybatisExecutorSqlSender2MqPlugin implements Interceptor {
                 Object insertObj = getter.getInsertObject();
                 map = SQL_TRANSLATOR.translate(insertObj);
             }
+            map.put("timestamp", System.currentTimeMillis());
+            String message = map.toString();
+            sender.send(message);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            LOGGER.error("SQL translate error", e);
         }
-
         return object;
     }
 

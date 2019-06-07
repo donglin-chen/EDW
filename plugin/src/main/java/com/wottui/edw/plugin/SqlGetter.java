@@ -33,7 +33,6 @@ public class SqlGetter {
     public SqlGetter(Invocation invocation) {
         this.invocation = invocation;
         this.mappedStatement = (MappedStatement) invocation.getArgs()[0];
-
     }
 
     boolean isUpdateCommand() {
