@@ -26,21 +26,13 @@ import java.util.Properties;
 public class MybatisExecutorSqlSender2MqPlugin implements Interceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisExecutorSqlSender2MqPlugin.class);
-    private static final SqlTranslator SQL_TRANSLATOR = new SqlTranslatorImpl();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         SqlGetter getter = new SqlGetter(invocation);
         Object object = invocation.proceed();
         try {
-            TranslatorMap map;
-            if (getter.isUpdateCommand()) {
-                String sql = getter.getSql();
-                map = SQL_TRANSLATOR.translate(sql);
-            } else {
-                Object insertObj = getter.getInsertObject();
-                map = SQL_TRANSLATOR.translate(insertObj);
-            }
+
         } catch (Exception e) {
             LOGGER.error("", e);
         }

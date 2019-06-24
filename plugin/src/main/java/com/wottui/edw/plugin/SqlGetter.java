@@ -12,7 +12,6 @@ import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 
@@ -94,7 +93,6 @@ public class SqlGetter {
     }
 
     private static String replaceParameter(String sql, Object value, JdbcType jdbcType, Class javaType) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:ss:mm");
         String strValue = String.valueOf(value);
         if (jdbcType != null) {
             switch (jdbcType) {
@@ -112,18 +110,10 @@ public class SqlGetter {
                     break;
                 //日期
                 case DATE:
-                    strValue = simpleDateFormat.format(value);
-                    break;
                 case TIME:
                 case TIMESTAMP:
-                    if (value != null) {
-                        strValue = simpleDateFormat.format(value);
-                        break;
-                    }
                 default:
                     strValue = "'" + strValue + "'";
-
-
             }
         } else if (Number.class.isAssignableFrom(javaType)) {
             //不加单引号
